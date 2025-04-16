@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Test Generator</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: #121212;
+      color: #fff;
+      height: 100vh;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .cursor-light {
+      position: absolute;
+      width: 300px;
+      height: 300px;
+      pointer-events: none;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, transparent 60%);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 1;
+      filter: blur(10px);
+    }
+
+    .frame {
+      position: relative;
+      width: 500px;
+      height: 540px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 2px solid white;
+      border-radius: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: baseline;
+      z-index: 2;
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(8px);
+    }
+
+    .label {
+      position: absolute;
+      top: 9.5pc;
+      padding: 10px 20px;
+      border-radius: 12px;
+      border: 2px solid white;
+      color: white;
+      font-size: 1.2rem;
+      font-weight: bold;
+      text-shadow: 0 0 5px white;
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.5),
+                  0 0 20px rgba(255, 255, 255, 0.2);
+      background-color: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(6px);
+    }
+
+    .label2 {
+      position: absolute;
+      top: 14pc;
+      padding: 10px 140px;
+      border-radius: 12px;
+      border: 2px solid white;
+      color: white;
+      font-size: 1.5rem;
+      font-weight: bold;
+      text-shadow: 0 0 5px white;
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.5),
+                  0 0 20px rgba(255, 255, 255, 0.2);
+      background-color: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(6px);
+    }
+
+    .GenKey {
+      position: absolute;
+      top: 18.5pc;
+      padding: 10px 40px;
+      border-radius: 12px;
+      border: 2px solid white;
+      color: white;
+      font-size: 1.2rem;
+      font-weight: bold;
+      text-shadow: 0 0 5px white;
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.5),
+                  0 0 20px rgba(255, 255, 255, 0.2);
+      background-color: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(6px);
+    }
+
+    .clipboard-img {
+      position: absolute;
+      top: 14.5pc; /* adjust as needed */
+      right: 2pc;
+      width: 40px;
+      height: auto;
+      filter: brightness(0) invert(1) drop-shadow(0 0 10px white);
+      border-radius: 10px;
+      transition: transform 0.3s ease, width 0.3s ease;
+      transform-origin: center;
+    }
+
+    .clipboard-img:hover {
+      width: 41px;
+      transform: scale(1.15);
+    }
+
+    /* Style for the "Copied!" message */
+    .copied-message {
+      position: absolute;
+      top: 2pc;
+      width: 100%;
+      text-align: center;
+      color: #eeff00; /* Green color */
+      font-size: 1.5rem;
+      font-weight: bold;
+      text-shadow: 0 0 5px white;
+      opacity: 0;
+      transition: opacity 0.5s ease-in-out;
+    }
+
+    .Key-message {
+      position: absolute;
+      top: 25pc;
+      width: 100%;
+      text-align: center;
+      color: #eeff00; /* Green color */
+      font-size: 1.5rem;
+      font-weight: bold;
+      text-shadow: 0 0 5px white;
+      opacity: 0;
+      transition: opacity 0.5s ease-in-out;
+    }
+
+  </style>
+</head>
+<body>
+  <div class="cursor-light" id="light"></div>
+
+  <div class="frame">
+    <div class="label">Key Generator</div>
+    <div class="label2" id="label2">######-######</div>
+    <img src="../clipboard.png" class="clipboard-img" alt="Clipboard" id="clipboard">
+    <div class="copied-message" id="copiedMessage">Copied!</div> <!-- New "Copied!" message -->
+    <div class="Key-message" id="Key-message">Key Generated!</div>
+    <div class="GenKey" id="GenKey">Generate Key</div>
+</div>
+
+  <script>
+    const light = document.getElementById('light');
+    const clipboardImg = document.getElementById('clipboard');
+    const label2 = document.getElementById('label2');
+    const copiedMessage = document.getElementById('copiedMessage'); // Get the copied message element
+    const GenKeyu = document.getElementById('GenKey')
+    const Keymessage = document.getElementById('Key-message')
+
+    let Generated = false
+
+    let mouseX = 0, mouseY = 0;
+    let currentX = 0, currentY = 0;
+
+    document.addEventListener('mousemove', (e) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+    });
+
+    // Smooth cursor light animation
+    function animate() {
+      currentX += (mouseX - currentX) * 0.1;
+      currentY += (mouseY - currentY) * 0.1;
+
+      light.style.left = `${currentX}px`;
+      light.style.top = `${currentY}px`;
+
+      requestAnimationFrame(animate);
+    }
+
+    function generateRandomKey() {
+      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+      let part1 = '', part2 = '';
+      for (let i = 0; i < 6; i++) {
+        part1 += chars.charAt(Math.floor(Math.random() * chars.length));
+        part2 += chars.charAt(Math.floor(Math.random() * chars.length));
+      }
+      return `${part1}-${part2}`;
+    }
+
+    animate();
+
+    GenKeyu.addEventListener('click', () => {
+        
+        if (Generated == false) {
+            Generated = true
+            const newKey = generateRandomKey();
+            label2.textContent = newKey;
+            Generated = true;
+            Keymessage.innerHTML = 'Key Generated!';
+            Keymessage.style.color = '#eeff00';
+            Keymessage.innerHTML = 'Key Generated!';
+            Keymessage.style.color = '#eeff00';
+        } else {
+            Keymessage.innerHTML = 'Already created a Key!';
+            Keymessage.style.color = '#FF0000';
+            Keymessage.style.textShadow = "0 0 5px #FF0000";
+        }
+
+        Keymessage.style.opacity = 1;
+        
+        setTimeout(() => {
+            Keymessage.style.opacity = 0;
+        }, 2000);
+    })
+
+    clipboardImg.addEventListener('click', () => {
+      const textToCopy = label2.textContent;
+
+      navigator.clipboard.writeText(textToCopy).then(() => {
+        // Show the "Copied!" message
+        copiedMessage.style.opacity = 1;
+
+        // Hide the "Copied!" message after 2 seconds
+        setTimeout(() => {
+          copiedMessage.style.opacity = 0;
+        }, 2000);
+      }).catch(err => {
+        console.error('Failed to copy text: ', err);
+      });
+    });
+  </script>
+</body>
+</html>
