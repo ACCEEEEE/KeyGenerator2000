@@ -244,18 +244,31 @@
       });
     });
 
+    (function() {
     const urlParams = new URLSearchParams(window.location.search);
     const access = urlParams.get('access');
 
-    fetch(`/api/validate-access?access=${access}`)
+    if (!access) {
+      alert('Missing access token. Please complete the steps.');
+      window.location.href = 'https://linkvert-flow.vercel.app/start.html';
+      return;
+    }
+
+    fetch(`https://linkvert-flow.vercel.app/api/validate-access?access=${access}`)
       .then(res => res.json())
       .then(data => {
         if (!data.valid) {
-          alert('Access denied. You must complete the steps first.');
-          window.location.href = 'start.html';
+          alert('Access denied. You must complete the Linkvertise steps.');
+          window.location.href = 'https://linkvert-flow.vercel.app/start.html';
         }
+      })
+      .catch(err => {
+        console.error('Validation error:', err);
+        alert('Error validating access.');
+        window.location.href = 'https://linkvert-flow.vercel.app/start.html';
       });
-      
+  })();
+
   </script>
 </body>
 </html>
