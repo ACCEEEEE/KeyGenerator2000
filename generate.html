@@ -244,7 +244,7 @@
       });
     });
 
-    (function() {
+    (async () => {
     const urlParams = new URLSearchParams(window.location.search);
     const access = urlParams.get('access');
 
@@ -254,19 +254,19 @@
       return;
     }
 
-    fetch(`https://linkvert-flow.vercel.app/api/validate-access?access=${access}`)
-      .then(res => res.json())
-      .then(data => {
-        if (!data.valid) {
-          alert('Access denied. You must complete the Linkvertise steps.');
-          window.location.href = 'https://linkvert-flow.vercel.app/start.html';
-        }
-      })
-      .catch(err => {
-        console.error('Validation error:', err);
-        alert('Error validating access.');
+    try {
+      const response = await fetch(`/api/validate-access?access=${access}`);
+      const data = await response.json();
+
+      if (!data.valid) {
+        alert('Invalid access token. Please try again.');
         window.location.href = 'https://linkvert-flow.vercel.app/start.html';
-      });
+      }
+    } catch (err) {
+      console.error('Validation error:', err);
+      alert('An error occurred during validation.');
+      window.location.href = 'https://linkvert-flow.vercel.app/start.html';
+    }
   })();
 
   </script>
