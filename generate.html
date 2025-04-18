@@ -243,6 +243,19 @@
         console.error('Failed to copy text: ', err);
       });
     });
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const access = urlParams.get('access');
+
+    fetch(`/api/validate-access?access=${access}`)
+      .then(res => res.json())
+      .then(data => {
+        if (!data.valid) {
+          alert('Access denied. You must complete the steps first.');
+          window.location.href = 'start.html';
+        }
+      });
+      
   </script>
 </body>
 </html>
